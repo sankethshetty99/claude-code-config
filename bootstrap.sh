@@ -50,6 +50,27 @@ echo ""
 
 mkdir -p .claude/agents .claude/skills .claude/commands
 
+# ──────────────────────────────────────────────
+# Check for gcloud CLI (optional but recommended)
+# ──────────────────────────────────────────────
+
+if ! command -v gcloud &> /dev/null; then
+    echo "NOTE: 'gcloud' CLI not found."
+    echo "  Install it for GCP MCP server support: https://cloud.google.com/sdk/docs/install"
+    echo ""
+fi
+
+# ──────────────────────────────────────────────
+# Check for GEMINI_API_KEY (optional but recommended)
+# ──────────────────────────────────────────────
+
+if [ -z "$GEMINI_API_KEY" ]; then
+    echo "NOTE: GEMINI_API_KEY not set."
+    echo "  Get one at https://aistudio.google.com/apikey"
+    echo "  Then: export GEMINI_API_KEY=your-key-here"
+    echo ""
+fi
+
 download() {
     local src="$1"
     local dest="$2"
@@ -78,6 +99,15 @@ download ".claude/commands/review.md" ".claude/commands/review.md"
 download ".claude/skills/design-system.md" ".claude/skills/design-system.md"
 download ".claude/skills/supabase-api-patterns.md" ".claude/skills/supabase-api-patterns.md"
 download ".claude/skills/gemini-ai-patterns.md" ".claude/skills/gemini-ai-patterns.md"
+download ".claude/skills/gcloud-patterns.md" ".claude/skills/gcloud-patterns.md"
+
+# MCP server config (only if it doesn't exist)
+if [ -f ".mcp.json" ]; then
+    echo ""
+    echo "  .mcp.json already exists — skipping (not overwritten)."
+else
+    download ".mcp.json" ".mcp.json"
+fi
 
 # CLAUDE.md (only if it doesn't exist)
 if [ -f "CLAUDE.md" ]; then
@@ -130,6 +160,7 @@ echo "============================================"
 echo ""
 echo "Your project now has:"
 echo "  CLAUDE.md                                — Project instructions"
+echo "  .mcp.json                                — MCP servers (gcloud + gemini)"
 echo "  .claude/settings.json                    — Plugins + permissions (allow/ask)"
 echo "  .claude/settings.local.json              — Personal overrides (gitignored)"
 echo "  .claude/.gitignore                       — Keeps local settings out of git"
@@ -138,6 +169,7 @@ echo "  .claude/commands/review.md               — /review command"
 echo "  .claude/skills/design-system.md          — UI/design patterns"
 echo "  .claude/skills/supabase-api-patterns.md  — API & DB patterns"
 echo "  .claude/skills/gemini-ai-patterns.md     — AI integration patterns"
+echo "  .claude/skills/gcloud-patterns.md        — GCP deployment & operations"
 echo ""
 echo "Next steps — customize for this project:"
 echo "  1. Edit CLAUDE.md with your project name, description, and architecture"
@@ -145,4 +177,6 @@ echo "  2. Edit/delete skills in .claude/skills/ for your stack"
 echo "  3. Edit .claude/agents/code-reviewer.md for your conventions"
 echo "  4. Edit .claude/settings.json to remove plugins you don't need"
 echo "  5. Add personal permission overrides to .claude/settings.local.json"
+echo "  6. Set GEMINI_API_KEY env var for the Gemini MCP server"
+echo "  7. Run 'gcloud auth login' if you haven't already for the gcloud MCP server"
 echo ""

@@ -63,8 +63,16 @@ return <SuccessView data={data} />;
 - **Section transition**: `initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}`
 - **Spring for icons/badges**: `type: "spring", stiffness: 400, damping: 15`
 
+### Google Cloud & Gemini (Warning)
+- **No hardcoded project IDs**: Use `gcloud config get-value project` or environment variables
+- **No committed credentials**: Service account keys, API keys, `.env` files must never be committed
+- **Region flag**: All `gcloud` deploy commands must include `--region`
+- **Gemini role mapping**: Use `"model"` not `"assistant"` for Gemini message roles
+- **JSON validation**: All `generateGeminiJSON` responses must be validated at runtime
+- **Streaming error handling**: SSE streams must have try/catch with `[DONE]` termination
+
 ### Security (Critical)
-- No exposed secrets or API keys
+- No exposed secrets or API keys (including `GEMINI_API_KEY`, service account keys)
 - No SQL injection via raw string interpolation
 - Auth check on every API route
 - Input validation at API boundaries

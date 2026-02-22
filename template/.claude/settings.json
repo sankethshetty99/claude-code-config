@@ -38,7 +38,18 @@
       "Bash(git add:*)",
       "Bash(git check-ignore:*)",
       "Bash(gh auth status:*)",
-      "Bash(gh repo view:*)"
+      "Bash(gh repo view:*)",
+      "Bash(gcloud config get-value project:*)",
+      "Bash(gcloud config list:*)",
+      "Bash(gcloud projects list:*)",
+      "Bash(gcloud services list:*)",
+      "Bash(gcloud auth list:*)",
+      "Bash(gcloud compute instances list:*)",
+      "Bash(gcloud run services list:*)",
+      "Bash(gcloud functions list:*)",
+      "Bash(gcloud sql instances list:*)",
+      "Bash(gcloud logging read:*)",
+      "Bash(gcloud builds list:*)"
     ],
     "ask": [
       "Bash(git commit:*)",
@@ -56,7 +67,18 @@
       "Bash(gh repo create:*)",
       "Bash(gh repo rename:*)",
       "Bash(gh repo edit:*)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(gcloud deploy:*)",
+      "Bash(gcloud run deploy:*)",
+      "Bash(gcloud functions deploy:*)",
+      "Bash(gcloud app deploy:*)",
+      "Bash(gcloud compute instances create:*)",
+      "Bash(gcloud compute instances delete:*)",
+      "Bash(gcloud sql instances create:*)",
+      "Bash(gcloud sql instances delete:*)",
+      "Bash(gcloud services enable:*)",
+      "Bash(gcloud services disable:*)",
+      "Bash(gcloud iam:*)"
     ]
   },
   "plansDirectory": "./plans",

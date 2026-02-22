@@ -5,6 +5,8 @@
 - **Frontend:**
 - **Backend:**
 - **Database:**
+- **Cloud:** Google Cloud Platform (GCP)
+- **AI:** Google Gemini API
 - **Deployment:**
 
 ## Engineering Preferences
@@ -21,6 +23,27 @@ When reviewing code or proposing changes:
 - **Small changes:** One question per review section
 - Number issues and letter options (e.g., "Issue 1, Option A") so choices are unambiguous
 - Do not assume priorities on timeline or scale
+
+## Google Cloud & Gemini
+
+### MCP Servers
+This project has two MCP servers configured in `.mcp.json`:
+- **gcloud** — Interact with GCP resources via the gcloud CLI (requires `gcloud` installed and authenticated)
+- **gemini** — Access Gemini API for text generation, code analysis, image generation, and research (requires `GEMINI_API_KEY` env var)
+
+### GCP Conventions
+- Always verify the active project with `gcloud config get-value project` before making changes
+- Use `gcloud run deploy` for Cloud Run, `gcloud functions deploy` for Cloud Functions
+- Check enabled APIs with `gcloud services list --enabled` before using a service
+- View logs with `gcloud logging read` for debugging deployments
+- Never hardcode project IDs — use `gcloud config get-value project` or environment variables
+
+### Gemini API Conventions
+- API key is stored in `GEMINI_API_KEY` environment variable — never commit it
+- Use the Gemini AI patterns skill (`.claude/skills/gemini-ai-patterns.md`) for client functions and integration patterns
+- Always validate structured JSON responses at runtime
+- Use streaming for chat/conversational features, structured JSON for scoring/evaluation
+- System prompts live in `src/lib/gemini/prompts/` — one file per prompt type
 
 ## Project Context
 <!-- This section will grow as you work on the project. Add key architectural decisions, domain knowledge, and important context here. -->
