@@ -128,7 +128,7 @@ echo ""
 install_plugin() {
     local plugin="$1"
     echo "  Installing $plugin..."
-    if claude plugin install "$plugin" --scope user 2>/dev/null; then
+    if claude plugin install "$plugin" --scope project 2>/dev/null; then
         echo "    Done."
     else
         echo "    Skipped (may already be installed or unavailable)."
