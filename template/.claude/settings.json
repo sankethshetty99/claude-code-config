@@ -1,0 +1,14 @@
+{
+  "enabledPlugins": {
+    "vercel@claude-plugins-official": true,
+    "stripe@claude-plugins-official": true,
+    "playground@claude-plugins-official": true,
+    "posthog@claude-plugins-official": true,
+    "supabase@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "figma@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "product-management@knowledge-work-plugins": true,
+    "data@knowledge-work-plugins": true
+  }
+}
