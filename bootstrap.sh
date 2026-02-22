@@ -128,10 +128,15 @@ echo ""
 install_plugin() {
     local plugin="$1"
     echo "  Installing $plugin..."
-    if claude plugin install "$plugin" --scope project 2>/dev/null; then
+    local output
+    if output=$(claude plugin install "$plugin" --scope project 2>&1); then
         echo "    Done."
     else
-        echo "    Skipped (may already be installed or unavailable)."
+        if echo "$output" | grep -qi "already installed"; then
+            echo "    Already installed."
+        else
+            echo "    FAILED: $output"
+        fi
     fi
 }
 
@@ -153,6 +158,43 @@ for plugin in "${PLUGINS[@]}"; do
     install_plugin "$plugin"
 done
 
+# ──────────────────────────────────────────────
+# Install agent skills (visible in .claude/skills/)
+# ──────────────────────────────────────────────
+
+echo ""
+echo "Installing agent skills..."
+echo ""
+
+if ! command -v npx &> /dev/null; then
+    echo "NOTE: 'npx' not found — skipping agent skills installation."
+    echo "  Install Node.js to get agent skills: https://nodejs.org/"
+    echo "  Then run manually:"
+    echo "    npx -y skills add supabase/agent-skills --all"
+    echo "    npx -y skills add vercel-labs/agent-skills --all"
+    echo ""
+else
+    install_skill() {
+        local source="$1"
+        echo "  Installing skills from $source..."
+        if npx -y skills add "$source" --all 2>&1; then
+            echo "    Done."
+        else
+            echo "    FAILED to install skills from $source"
+            echo "    Run manually later: npx -y skills add $source --all"
+        fi
+    }
+
+    SKILL_SOURCES=(
+        "supabase/agent-skills"
+        "vercel-labs/agent-skills"
+    )
+
+    for source in "${SKILL_SOURCES[@]}"; do
+        install_skill "$source"
+    done
+fi
+
 echo ""
 echo "============================================"
 echo "  Bootstrap Complete!"
@@ -166,10 +208,8 @@ echo "  .claude/settings.local.json              — Personal overrides (gitigno
 echo "  .claude/.gitignore                       — Keeps local settings out of git"
 echo "  .claude/agents/code-reviewer.md          — Code review agent"
 echo "  .claude/commands/review.md               — /review command"
-echo "  .claude/skills/design-system.md          — UI/design patterns"
-echo "  .claude/skills/supabase-api-patterns.md  — API & DB patterns"
-echo "  .claude/skills/gemini-ai-patterns.md     — AI integration patterns"
-echo "  .claude/skills/gcloud-patterns.md        — GCP deployment & operations"
+echo "  .claude/skills/                          — Template + agent skill packages"
+echo "  .agents/skills/                          — Agent skills (supabase, vercel)"
 echo ""
 echo "Next steps — customize for this project:"
 echo "  1. Edit CLAUDE.md with your project name, description, and architecture"
@@ -179,4 +219,6 @@ echo "  4. Edit .claude/settings.json to remove plugins you don't need"
 echo "  5. Add personal permission overrides to .claude/settings.local.json"
 echo "  6. Set GEMINI_API_KEY env var for the Gemini MCP server"
 echo "  7. Run 'gcloud auth login' if you haven't already for the gcloud MCP server"
+echo "  8. Run 'npx skills list' to see installed agent skills"
+echo "  9. Run 'npx -y skills add <repo> --all' to add more skills"
 echo ""

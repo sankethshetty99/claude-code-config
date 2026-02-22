@@ -14,7 +14,8 @@ Or tell Claude Code: *"Set up my project using https://github.com/sankethshetty9
 
 That's it. One command does everything:
 - Downloads all config files into your project
-- Installs Claude Code plugins
+- Installs Claude Code plugins (project-scoped)
+- Installs agent skills from Supabase and Vercel (visible in `.agents/skills/`)
 - Sets up permissions with allow/ask safety model
 
 ## What Gets Installed
@@ -35,6 +36,16 @@ CLAUDE.md                              # Project instructions for Claude
     design-system.md                   # UI/design patterns
     supabase-api-patterns.md           # API route and DB patterns
     gemini-ai-patterns.md              # AI integration patterns
+    supabase-postgres-best-practices/  # → symlink to .agents/skills/
+    vercel-composition-patterns/       # → symlink to .agents/skills/
+    vercel-react-best-practices/       # → symlink to .agents/skills/
+    web-design-guidelines/             # → symlink to .agents/skills/
+.agents/
+  skills/                              # Agent skill packages (installed via npx skills)
+    supabase-postgres-best-practices/
+    vercel-composition-patterns/
+    vercel-react-best-practices/
+    web-design-guidelines/
 ```
 
 ### Permissions Model
@@ -48,7 +59,18 @@ CLAUDE.md                              # Project instructions for Claude
 
 Personal overrides go in `settings.local.json` (gitignored).
 
-### Plugins (user-scoped, available across projects)
+### Agent Skills (project-scoped, visible in file tree)
+
+Installed via `npx skills add` from GitHub repos. These create `.agents/skills/` directories with full knowledge packages and symlinks in `.claude/skills/`.
+
+| Source | Skills Provided |
+|--------|----------------|
+| `supabase/agent-skills` | Postgres best practices, performance optimization |
+| `vercel-labs/agent-skills` | React best practices, composition patterns, web design guidelines |
+
+Add more: `npx -y skills add <github-org/repo> --all`
+
+### Plugins (project-scoped)
 
 | Plugin | Source | Purpose |
 |--------|--------|---------|
