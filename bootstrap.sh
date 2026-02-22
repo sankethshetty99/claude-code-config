@@ -125,17 +125,35 @@ echo ""
 echo "Installing Claude Code plugins..."
 echo ""
 
+PLUGIN_CACHE="$HOME/.claude/plugins/cache"
+
 install_plugin() {
     local plugin="$1"
-    echo "  Installing $plugin..."
+    local name="${plugin%@*}"
+    local marketplace="${plugin#*@}"
+    echo "  Installing $name..."
     local output
     if output=$(claude plugin install "$plugin" --scope project 2>&1); then
-        echo "    Done."
+        echo "    Registered."
     else
         if echo "$output" | grep -qi "already installed"; then
-            echo "    Already installed."
+            echo "    Already registered."
         else
             echo "    FAILED: $output"
+            return 1
+        fi
+    fi
+
+    # Copy plugin files into .claude/plugins/ so they're visible in the file tree
+    local cache_dir="$PLUGIN_CACHE/$marketplace/$name"
+    if [ -d "$cache_dir" ]; then
+        # Find the versioned subdirectory (e.g., 4.3.1, 1.0.0)
+        local version_dir
+        version_dir=$(ls -d "$cache_dir"/*/ 2>/dev/null | head -1)
+        if [ -n "$version_dir" ]; then
+            mkdir -p ".claude/plugins/$name"
+            cp -R "$version_dir"/* ".claude/plugins/$name/"
+            echo "    Copied to .claude/plugins/$name/"
         fi
     fi
 }
@@ -208,6 +226,7 @@ echo "  .claude/settings.local.json              — Personal overrides (gitigno
 echo "  .claude/.gitignore                       — Keeps local settings out of git"
 echo "  .claude/agents/code-reviewer.md          — Code review agent"
 echo "  .claude/commands/review.md               — /review command"
+echo "  .claude/plugins/                         — Plugin files (11 plugins)"
 echo "  .claude/skills/                          — Template + agent skill packages"
 echo "  .agents/skills/                          — Agent skills (supabase, vercel)"
 echo ""
