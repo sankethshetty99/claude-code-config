@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+FORCE=false
+for arg in "$@"; do
+    case "$arg" in
+        --force|-f) FORCE=true ;;
+    esac
+done
+
 REPO_RAW="https://raw.githubusercontent.com/sankethshetty99/claude-code-config/main"
 
 echo "============================================"
@@ -33,11 +40,20 @@ echo ""
 # ──────────────────────────────────────────────
 
 if [ -d ".claude" ]; then
-    echo "WARNING: .claude/ directory already exists in this project."
-    read -p "Overwrite? (y/N): " confirm
-    if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-        echo "Aborted."
-        exit 0
+    if [ "$FORCE" = true ]; then
+        echo "WARNING: .claude/ directory already exists — overwriting (--force)."
+    elif [ -t 0 ]; then
+        # Interactive terminal: ask user
+        read -p "WARNING: .claude/ directory already exists. Overwrite? (y/N): " confirm
+        if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+            echo "Aborted."
+            exit 0
+        fi
+    else
+        # Non-interactive (piped): fail safe with clear instructions
+        echo "ERROR: .claude/ directory already exists and stdin is not interactive."
+        echo "  Re-run with --force to overwrite:  bash bootstrap.sh --force"
+        exit 1
     fi
 fi
 
