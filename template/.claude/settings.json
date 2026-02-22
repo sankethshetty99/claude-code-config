@@ -10,5 +10,55 @@
     "claude-md-management@claude-plugins-official": true,
     "product-management@knowledge-work-plugins": true,
     "data@knowledge-work-plugins": true
-  }
+  },
+  "permissions": {
+    "allow": [
+      "Edit(*)",
+      "Write(*)",
+      "NotebookEdit(*)",
+      "WebFetch(domain:*)",
+      "WebSearch",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(grep:*)",
+      "Bash(printf:*)",
+      "Bash(file:*)",
+      "Bash(lsof:*)",
+      "Bash(node:*)",
+      "Bash(python3:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run test:*)",
+      "Bash(npx:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git add:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(gh auth status:*)",
+      "Bash(gh repo view:*)"
+    ],
+    "ask": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git rm:*)",
+      "Bash(git reset:*)",
+      "Bash(rm:*)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(pip3 install:*)",
+      "Bash(docker:*)",
+      "Bash(kill:*)",
+      "Bash(curl:*)",
+      "Bash(vercel:*)",
+      "Bash(gh repo create:*)",
+      "Bash(gh repo rename:*)",
+      "Bash(gh repo edit:*)",
+      "Bash(open:*)"
+    ]
+  },
+  "plansDirectory": "./plans",
+  "enableAllProjectMcpServers": true
 }

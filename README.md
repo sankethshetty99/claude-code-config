@@ -1,18 +1,54 @@
 # Claude Code Config
 
-Portable Claude Code configuration. Clone this repo on any machine, run the setup, and get the full Claude Code experience on any project.
+Portable Claude Code configuration. Point Claude Code at this repo from any blank project folder and get a fully configured environment — no cloning required.
 
-## Quick Start
+## Setup
 
-### 1. New Machine Setup (one-time)
+Open Claude Code in a **blank project folder** and run:
 
 ```bash
-git clone https://github.com/sankethshetty/claude-code-config.git ~/claude-code-config
-cd ~/claude-code-config
-./setup.sh
+curl -sL https://raw.githubusercontent.com/sankethshetty99/claude-code-config/main/bootstrap.sh | bash
 ```
 
-This installs all plugins globally (available across every project):
+Or tell Claude Code: *"Set up my project using https://github.com/sankethshetty99/claude-code-config — run the bootstrap script."*
+
+That's it. One command does everything:
+- Downloads all config files into your project
+- Installs Claude Code plugins
+- Sets up permissions with allow/ask safety model
+
+## What Gets Installed
+
+### Files (local to your project)
+
+```
+CLAUDE.md                              # Project instructions for Claude
+.claude/
+  .gitignore                           # Keeps local settings out of git
+  settings.json                        # Plugins + permissions (allow/ask)
+  settings.local.json                  # Personal overrides (gitignored)
+  agents/
+    code-reviewer.md                   # Automated code review agent
+  commands/
+    review.md                          # /review command — triggers code review
+  skills/
+    design-system.md                   # UI/design patterns
+    supabase-api-patterns.md           # API route and DB patterns
+    gemini-ai-patterns.md              # AI integration patterns
+```
+
+### Permissions Model
+
+`settings.json` uses an **allow/ask** structure:
+
+| Level | What | Examples |
+|-------|------|----------|
+| **allow** | Safe, non-destructive ops — no confirmation needed | `Edit`, `Write`, `git add`, `npm run build`, `ls`, `grep`, `WebFetch` |
+| **ask** | Potentially destructive — Claude asks before running | `git commit`, `git push`, `rm`, `npm install`, `docker`, `vercel` |
+
+Personal overrides go in `settings.local.json` (gitignored).
+
+### Plugins (user-scoped, available across projects)
 
 | Plugin | Source | Purpose |
 |--------|--------|---------|
@@ -28,53 +64,28 @@ This installs all plugins globally (available across every project):
 | product-management | knowledge-work-plugins | PM skills (specs, roadmaps, research) |
 | data | knowledge-work-plugins | Data analysis, SQL, dashboards |
 
-### 2. New Project Setup (per project)
+### Other Settings
 
-```bash
-cd ~/my-new-project
-~/claude-code-config/init-project.sh
-```
+| Setting | Value | What it does |
+|---------|-------|--------------|
+| `plansDirectory` | `./plans` | Stores Claude's plans in a visible folder you can review |
+| `enableAllProjectMcpServers` | `true` | Auto-enables any MCP servers configured in the project |
 
-This copies into your project:
+## After Setup — Customize for Your Project
 
-```
-.claude/
-  settings.json            # Enables all plugins for the project
-  settings.local.json      # Permission allowlist (gitignored)
-  agents/
-    code-reviewer.md       # Automated code review agent
-  skills/
-    design-system.md       # UI/design patterns
-    supabase-api-patterns.md   # API route and DB patterns
-    gemini-ai-patterns.md      # AI integration patterns
-CLAUDE.md                  # Project instructions for Claude
-```
+1. **CLAUDE.md** — Update project name, description, architecture rules, and context
+2. **`.claude/skills/`** — Update patterns for your stack (or delete skills that don't apply)
+3. **`.claude/agents/code-reviewer.md`** — Adjust review rules for your conventions
+4. **`.claude/commands/`** — Add workflow commands (use `/project:review` to run the included one)
+5. **`.claude/settings.json`** — Remove plugins you don't need, adjust permissions
 
-### 3. Customize for Your Project
+## Template Stack
 
-After running `init-project.sh`, edit these files for your specific project:
+The default templates are configured for: **Next.js 15 + Tailwind + shadcn/ui + Supabase + Gemini AI + Vercel + Stripe + PostHog**. Customize everything after setup for your actual stack.
 
-- **CLAUDE.md** - Change project name, description, architecture rules, and context
-- **`.claude/skills/`** - Update patterns for your stack (or delete skills that don't apply)
-- **`.claude/agents/code-reviewer.md`** - Adjust review rules
-- **`.claude/settings.json`** - Remove plugins you don't need
+## Updating Templates
 
-## What's Included
-
-### Skills (`.claude/skills/`)
-- **design-system.md** - Dark theme tokens, Framer Motion animations, component patterns, anti-patterns
-- **supabase-api-patterns.md** - API route structure, auth, RLS, queries, streaming, logging
-- **gemini-ai-patterns.md** - Streaming/JSON/text AI calls, system prompts, error handling
-
-### Agents (`.claude/agents/`)
-- **code-reviewer.md** - Reviews code against project standards (design system, architecture, TypeScript, security)
-
-### CLAUDE.md
-Engineering preferences (DRY, explicit > clever, handle edge cases), code review workflow, design system rules, and architecture rules.
-
-## Updating
-
-When you improve your config in a project, copy the changes back:
+When you improve config in a project, push changes back to this repo:
 
 ```bash
 # From your project directory

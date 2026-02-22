@@ -1,0 +1,148 @@
+#!/bin/bash
+set -e
+
+REPO_RAW="https://raw.githubusercontent.com/sankethshetty99/claude-code-config/main"
+
+echo "============================================"
+echo "  Claude Code Project Bootstrap"
+echo "============================================"
+echo ""
+echo "Setting up Claude Code configuration in: $(pwd)"
+echo ""
+
+# ──────────────────────────────────────────────
+# Check prerequisites
+# ──────────────────────────────────────────────
+
+if ! command -v claude &> /dev/null; then
+    echo "ERROR: 'claude' CLI not found."
+    echo "Install it first: https://docs.anthropic.com/en/docs/claude-code/overview"
+    exit 1
+fi
+
+if ! command -v curl &> /dev/null; then
+    echo "ERROR: 'curl' not found."
+    exit 1
+fi
+
+echo "Found claude CLI: $(which claude)"
+echo ""
+
+# ──────────────────────────────────────────────
+# Safety check: warn if .claude/ already exists
+# ──────────────────────────────────────────────
+
+if [ -d ".claude" ]; then
+    echo "WARNING: .claude/ directory already exists in this project."
+    read -p "Overwrite? (y/N): " confirm
+    if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+        echo "Aborted."
+        exit 0
+    fi
+fi
+
+# ──────────────────────────────────────────────
+# Download template files from GitHub
+# ──────────────────────────────────────────────
+
+echo "Downloading configuration files..."
+echo ""
+
+mkdir -p .claude/agents .claude/skills .claude/commands
+
+download() {
+    local src="$1"
+    local dest="$2"
+    if curl -sfL "$REPO_RAW/template/$src" -o "$dest"; then
+        echo "  Created $dest"
+    else
+        echo "  FAILED to download $src"
+        exit 1
+    fi
+}
+
+# .claude/.gitignore
+download ".claude/.gitignore" ".claude/.gitignore"
+
+# Settings
+download ".claude/settings.json" ".claude/settings.json"
+download ".claude/settings.local.json" ".claude/settings.local.json"
+
+# Agents
+download ".claude/agents/code-reviewer.md" ".claude/agents/code-reviewer.md"
+
+# Commands
+download ".claude/commands/review.md" ".claude/commands/review.md"
+
+# Skills
+download ".claude/skills/design-system.md" ".claude/skills/design-system.md"
+download ".claude/skills/supabase-api-patterns.md" ".claude/skills/supabase-api-patterns.md"
+download ".claude/skills/gemini-ai-patterns.md" ".claude/skills/gemini-ai-patterns.md"
+
+# CLAUDE.md (only if it doesn't exist)
+if [ -f "CLAUDE.md" ]; then
+    echo ""
+    echo "  CLAUDE.md already exists — skipping (not overwritten)."
+else
+    download "CLAUDE.md" "CLAUDE.md"
+fi
+
+# ──────────────────────────────────────────────
+# Install plugins
+# ──────────────────────────────────────────────
+
+echo ""
+echo "Installing Claude Code plugins..."
+echo ""
+
+install_plugin() {
+    local plugin="$1"
+    echo "  Installing $plugin..."
+    if claude plugin install "$plugin" --scope user 2>/dev/null; then
+        echo "    Done."
+    else
+        echo "    Skipped (may already be installed or unavailable)."
+    fi
+}
+
+PLUGINS=(
+    "superpowers@claude-plugins-official"
+    "figma@claude-plugins-official"
+    "claude-md-management@claude-plugins-official"
+    "vercel@claude-plugins-official"
+    "stripe@claude-plugins-official"
+    "playground@claude-plugins-official"
+    "posthog@claude-plugins-official"
+    "supabase@claude-plugins-official"
+    "claude-code-setup@claude-plugins-official"
+    "product-management@knowledge-work-plugins"
+    "data@knowledge-work-plugins"
+)
+
+for plugin in "${PLUGINS[@]}"; do
+    install_plugin "$plugin"
+done
+
+echo ""
+echo "============================================"
+echo "  Bootstrap Complete!"
+echo "============================================"
+echo ""
+echo "Your project now has:"
+echo "  CLAUDE.md                                — Project instructions"
+echo "  .claude/settings.json                    — Plugins + permissions (allow/ask)"
+echo "  .claude/settings.local.json              — Personal overrides (gitignored)"
+echo "  .claude/.gitignore                       — Keeps local settings out of git"
+echo "  .claude/agents/code-reviewer.md          — Code review agent"
+echo "  .claude/commands/review.md               — /review command"
+echo "  .claude/skills/design-system.md          — UI/design patterns"
+echo "  .claude/skills/supabase-api-patterns.md  — API & DB patterns"
+echo "  .claude/skills/gemini-ai-patterns.md     — AI integration patterns"
+echo ""
+echo "Next steps — customize for this project:"
+echo "  1. Edit CLAUDE.md with your project name, description, and architecture"
+echo "  2. Edit/delete skills in .claude/skills/ for your stack"
+echo "  3. Edit .claude/agents/code-reviewer.md for your conventions"
+echo "  4. Edit .claude/settings.json to remove plugins you don't need"
+echo "  5. Add personal permission overrides to .claude/settings.local.json"
+echo ""
