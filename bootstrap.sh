@@ -170,18 +170,18 @@ if ! command -v npx &> /dev/null; then
     echo "NOTE: 'npx' not found — skipping agent skills installation."
     echo "  Install Node.js to get agent skills: https://nodejs.org/"
     echo "  Then run manually:"
-    echo "    npx -y skills add supabase/agent-skills --all"
-    echo "    npx -y skills add vercel-labs/agent-skills --all"
+    echo "    npx -y skills add supabase/agent-skills --agent claude-code --skill '*' -y"
+    echo "    npx -y skills add vercel-labs/agent-skills --agent claude-code --skill '*' -y"
     echo ""
 else
     install_skill() {
         local source="$1"
         echo "  Installing skills from $source..."
-        if npx -y skills add "$source" --all 2>&1; then
+        if npx -y skills add "$source" --agent claude-code --skill '*' -y 2>&1; then
             echo "    Done."
         else
             echo "    FAILED to install skills from $source"
-            echo "    Run manually later: npx -y skills add $source --all"
+            echo "    Run manually later: npx -y skills add $source --agent claude-code --skill '*' -y"
         fi
     }
 
@@ -220,5 +220,5 @@ echo "  5. Add personal permission overrides to .claude/settings.local.json"
 echo "  6. Set GEMINI_API_KEY env var for the Gemini MCP server"
 echo "  7. Run 'gcloud auth login' if you haven't already for the gcloud MCP server"
 echo "  8. Run 'npx skills list' to see installed agent skills"
-echo "  9. Run 'npx -y skills add <repo> --all' to add more skills"
+echo "  9. Run 'npx -y skills add <repo> --agent claude-code --skill \"*\" -y' to add more"
 echo ""

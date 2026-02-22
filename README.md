@@ -68,7 +68,7 @@ Installed via `npx skills add` from GitHub repos. These create `.agents/skills/`
 | `supabase/agent-skills` | Postgres best practices, performance optimization |
 | `vercel-labs/agent-skills` | React best practices, composition patterns, web design guidelines |
 
-Add more: `npx -y skills add <github-org/repo> --all`
+Add more: `npx -y skills add <github-org/repo> --agent claude-code --skill '*' -y`
 
 ### Plugins (project-scoped)
 
